@@ -1,0 +1,82 @@
+OBJECT Codeunit 50000 FTP Management
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/11/20;
+    Time=17:15:01;
+    Modified=Yes;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      GlobalRemotePath@1101318003 : Text;
+      GlobalUsername@1101318000 : Text;
+      GlobalPassword@1101318001 : Text;
+
+    PROCEDURE UploadPathFiles@1240060030(Path@1101318001 : Text;ExtensionFilter@1101318000 : Text);
+    VAR
+      SearchOption@1240060013 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.SearchOption" RUNONCLIENT;
+      SystemArray@1240060012 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Array" RUNONCLIENT;
+      SystemDirectory@1240060014 : DotNet "'mscorlib'.System.IO.Directory" RUNONCLIENT;
+      i@1101318003 : Integer;
+    BEGIN
+      SystemArray := SystemDirectory.GetFiles(Path, ExtensionFilter, SearchOption.TopDirectoryOnly);
+
+      FOR i := 0 TO SystemArray.Length DO
+        UploadFile(FORMAT(SystemArray.GetValue(i)));
+    END;
+
+    LOCAL PROCEDURE UploadFile@1240060031(FilePath@1240060018 : Text);
+    VAR
+      FTPRequest@1240060000 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Net.FtpWebRequest";
+      FTPResponse@1240060001 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Net.FtpWebResponse";
+      NetworkCredential@1240060002 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Net.NetworkCredential";
+      FileStream@1240060006 : DotNet "'mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.FileStream";
+      RequestStream@1240060020 : DotNet "'mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.Stream";
+      FileDotNet@1240060019 : DotNet "'mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.File";
+      FileManagement@1101318000 : Codeunit 419;
+    BEGIN
+      FTPRequest := FTPRequest.Create(GlobalRemotePath + FileManagement.GetFileName(FilePath));
+      FTPRequest.Credentials := NetworkCredential.NetworkCredential(GlobalUsername, GlobalPassword);
+      FTPRequest.UseBinary := TRUE;
+      FTPRequest.KeepAlive := TRUE;
+      FTPRequest.Method := 'STOR';
+
+      FileStream := FileDotNet.OpenRead(FilePath);
+      RequestStream := FTPRequest.GetRequestStream();
+      FileStream.CopyTo(RequestStream);
+      RequestStream.Close;
+
+      FTPResponse := FTPRequest.GetResponse();
+      FTPResponse.Close();
+    END;
+
+    PROCEDURE SetRemotePath@1101318001(RemotePath@1101318000 : Text);
+    BEGIN
+      GlobalRemotePath := RemotePath;
+    END;
+
+    PROCEDURE SetUsername@1101318002(Username@1101318000 : Text);
+    BEGIN
+      GlobalUsername := Username;
+    END;
+
+    PROCEDURE SetPassword@1101318003(Password@1101318000 : Text);
+    BEGIN
+      GlobalPassword := Password;
+    END;
+
+    BEGIN
+    {
+      Codeunit from https://github.com/matteoparlato/C-AL-Snippets
+    }
+    END.
+  }
+}
+
