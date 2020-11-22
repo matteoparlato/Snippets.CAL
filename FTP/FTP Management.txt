@@ -28,7 +28,7 @@ OBJECT Codeunit 50000 FTP Management
     BEGIN
       SystemArray := SystemDirectory.GetFiles(Path, SearchPattern, SearchOption.TopDirectoryOnly);
 
-      FOR i := 0 TO SystemArray.Length DO
+      FOR i := 0 TO SystemArray.Length - 1 DO
         UploadFile(FORMAT(SystemArray.GetValue(i)));
     END;
 
