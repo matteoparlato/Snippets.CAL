@@ -1,5 +1,0 @@
-C:\Users\mparlato\GitHub\Cryptography.CAL\Cryptography.CAL\bin\Release\Cryptography.CAL.dll
-C:\Users\mparlato\GitHub\Cryptography.CAL\Cryptography.CAL\bin\Release\Cryptography.CAL.pdb
-C:\Users\mparlato\GitHub\Cryptography.CAL\Cryptography.CAL\obj\Release\Cryptography.CAL.csproj.CoreCompileInputs.cache
-C:\Users\mparlato\GitHub\Cryptography.CAL\Cryptography.CAL\obj\Release\Cryptography.CAL.dll
-C:\Users\mparlato\GitHub\Cryptography.CAL\Cryptography.CAL\obj\Release\Cryptography.CAL.pdb
